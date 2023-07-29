@@ -1,9 +1,12 @@
 <template>
   <!--  <LoadingAnimation/>-->
-  <div class="p-4 bg-gradient-to-t from-blue-500 to-blue-300 rounded-md">
+  <div class="p-4 bg-gradient-to-t from-blue-500 to-blue-300 rounded-md max-w-[500px]">
     <div class="pb-10 text-white flex-col flex items-center justify-center">
-      <img :src="`https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`">
-      <h1 class="text-3xl flex items-center gap-2">Tyumen <settings-dialog/></h1>
+      <img v-if="weatherData?.weather[0].icon"
+           :src="`https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`">
+      <h1 class="text-3xl flex items-center gap-2">{{ weatherData?.name ?? '--' }}
+        <settings-dialog/>
+      </h1>
       <div class="text-6xl flex items-center gap-2">
         {{ weatherData?.main.temp }}°C
       </div>
@@ -18,8 +21,8 @@
           <h1>wind</h1>
           <hr class="w-full border-white/40">
           <div class="flex flex-col items-center">
-            <span class="font-semibold text-3xl">{{ windDirection }}</span>
-            <span class="text-1xl pt-1">{{ weatherData?.wind.speed }} m/s</span>
+            <span class="font-semibold text-3xl">{{ windDirection ?? '--' }}</span>
+            <span class="text-1xl pt-1">{{ weatherData?.wind.speed ?? '--' }} m/s</span>
           </div>
         </section>
         <section
@@ -27,7 +30,7 @@
           <h1>humidity</h1>
           <hr class="w-full border-white/40">
           <div class="flex items-center">
-            <span class="font-semibold text-3xl">{{ weatherData?.main.humidity }}%</span>
+            <span class="font-semibold text-3xl">{{ weatherData?.main.humidity ?? '--' }} %</span>
           </div>
         </section>
         <section
@@ -35,7 +38,7 @@
           <h1>pressure</h1>
           <hr class="w-full border-white/40">
           <div class="flex items-center">
-            <span class="font-semibold text-3xl">{{ weatherData?.main.pressure }}</span>
+            <span class="font-semibold text-3xl">{{ weatherData?.main.pressure ?? '--' }}</span>
           </div>
         </section>
       </article>
@@ -49,12 +52,9 @@ import {WeatherData} from "@/types";
 import {Dialog, DialogOverlay, DialogPanel} from "@headlessui/vue";
 import SettingsDialog from "@/components/SettingsDialog.vue";
 import SlideVertical from "@/components/transitions/SlideTransition.vue";
+import {useLocationStore} from "@/storage/store";
 
-// const displayTemperature = ref('C')
-const location = ref()
-// const units = ref('metric')
-
-location.value = {lon: '57.1522', lat: '65.5272'}
+const locationStore = useLocationStore()
 const weatherData = ref<WeatherData>()
 const windDirection = computed(() => {
   const windDirections = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
@@ -65,18 +65,37 @@ const windDirection = computed(() => {
   return windDirections[section]
 })
 
-function fetchData() {
-  weatherData.value = weatherMockData
+async function fetchData() {
+  const location = locationStore.activeLocation
+  if (location) {
+    await requestWeather(location.coords)
+  } else {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const coords = {lat: position.coords.latitude, lng: position.coords.longitude}
+      const response = await requestWeather(coords)
+      if (response !== null) {
+        weatherData.value = response
+      } else {
+        showErrorNotification('Could not retrieve weather information')
+      }
+    }, ()=>{
+      showErrorNotification('Allow geolocation usage or set active location in settings')
+    })
+  }
 }
 
-// async function requestWeather(coords: any, units = 'metric') {
-//   const API_KEY = '761673671f456dbb6eacfb3c95ae9bfb'
-//   const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&units=${units}&appid=${API_KEY}`)
-//   if (response.ok) {
-//     return await response.json()
-//   }
-//   return null
-// }
+async function requestWeather(coords: any) {
+  const API_KEY = '761673671f456dbb6eacfb3c95ae9bfb'
+  const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lng}&units=metric&appid=${API_KEY}`)
+  if (response.ok) {
+    return await response.json()
+  }
+  return null
+}
+
+function showErrorNotification(message: string) {
+
+}
 
 fetchData()
 

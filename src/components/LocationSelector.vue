@@ -15,7 +15,8 @@
       </appear-transition>
     </div>
     <slide-transition>
-      <combobox-options v-if="cityList.length" class="absolute mt-2 bg-white rounded-md p-2 shadow-md min-w-[50%]">
+      <combobox-options v-if="cityList.length"
+                        class="custom-scroll absolute mt-2 bg-white rounded-md p-2 shadow-md min-w-[50%] max-h-[10rem] overflow-auto">
         <combobox-option :key="city.id" v-for="city in cityList" as="template"
                          :value="city" v-slot="{active, selected}">
           <li class="px-2 py-1 cursor-pointer rounded-md truncate"
@@ -84,10 +85,21 @@ watch(query, () => {
   }
 })
 
-console.log()
-
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.custom-scroll {
+  ::-webkit-scrollbar {
+    width: 1em;
+  }
 
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+  }
+}
 </style>

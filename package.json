@@ -18,6 +18,7 @@
     "@heroicons/vue": "^2.0.18",
     "core-js": "^3.8.3",
     "csv-loader": "^3.0.5",
+    "pinia": "^2.1.6",
     "sass": "^1.64.1",
     "sass-loader": "^13.3.2",
     "tailwindcss": "^3.3.3",
