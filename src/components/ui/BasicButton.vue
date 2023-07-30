@@ -1,5 +1,5 @@
 <template>
-  <button class="border px-3 py-2 transition-colors rounded-md"
+  <button class="border px-2 py-1 transition-colors rounded-md"
           :class="{'bg-gray-100 text-gray-500':props.disabled,
                    'bg-white hover:bg-gray-100':!props.disabled}"
           :disabled="props.disabled">

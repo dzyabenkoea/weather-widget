@@ -1,8 +1,10 @@
 <template>
   <div class="p-4 bg-gradient-to-t from-blue-500 to-blue-300 rounded-md max-w-[500px] relative">
     <div class="pb-10 text-white flex-col flex items-center justify-center">
-      <img v-if="weatherData !== null" :src="`https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`"
-           @click="fetchingData = true">
+      <div class="h-[100px]">
+        <img v-if="weatherData?.weather[0].icon"
+                 :src="`https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`"
+                 @click="fetchingData = true"></div>
       <h1 class="text-3xl flex items-center gap-2">{{ weatherData?.name ?? '--' }}
         <settings-dialog/>
         <button @click="fetchData()">
@@ -51,15 +53,8 @@
 import weatherMockData from "@/assets/response";
 import {computed, ref, watchEffect} from "vue";
 import {Coords, WeatherData} from "@/types";
-import {Dialog, DialogOverlay, DialogPanel} from "@headlessui/vue";
 import SettingsDialog from "@/components/SettingsDialog.vue";
-import SlideVertical from "@/components/transitions/SlideTransition.vue";
 import {useSettingsStore} from "@/storage/store";
-import LoadingAnimation from "@/components/LoadingAnimation.vue";
-import AppearTransition from "@/components/transitions/AppearTransition.vue";
-import BounceAnimation from "@/components/BounceAnimation.vue";
-import SlideTransition from "@/components/transitions/SlideTransition.vue";
-import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import {ArrowPathIcon} from "@heroicons/vue/24/outline";
 
 const locationStore = useSettingsStore()
@@ -75,6 +70,9 @@ const windDirection = computed(() => {
 const fetchingData = ref(true)
 
 async function fetchData() {
+
+  // weatherData.value = weatherMockData
+  // return;
 
   fetchingData.value = true;
 
@@ -100,7 +98,7 @@ async function fetchData() {
 }
 
 async function requestWeather(coords: Coords) {
-  // const API_KEY = '761673671f456dbb6eacfb3c95ae9bfb'
+
   const API_KEY = locationStore.apiKey
   if (!API_KEY) {
     showErrorNotification('Enter OpenWeather API key in settings')
@@ -111,7 +109,9 @@ async function requestWeather(coords: Coords) {
   if (response.ok) {
     return await response.json()
   }
+
   return null
+
 }
 
 function showErrorNotification(message: string) {
