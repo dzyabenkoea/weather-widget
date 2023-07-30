@@ -8,9 +8,9 @@ export const useSettingsStore = defineStore('settings', () => {
     const locations = ref<Location[]>([])
     const defaultLocation = computed<Location>(() => locations.value[0] ?? null)
 
-    watch([locations, defaultLocation], () => {
+    watch([locations, defaultLocation, apiKey], () => {
         save()
-    })
+    }, {deep: true})
 
     function add(addedLocation) {
         const exists = locations.value.find(location => location.id === addedLocation.id) !== undefined
