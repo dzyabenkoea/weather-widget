@@ -23,7 +23,7 @@
             </appear-transition>
           </div>
           <h2 class="text-gray-500">Locations</h2>
-          <ul class="divide-y bg-white py-1 px-2 rounded-md border">
+          <ul class="bg-white py-1 px-2 rounded-md border">
             <li v-if="!settingsStore.locations.length" :key="null"
                 class="px-2 py-4 flex flex-col items-center justify-between">
               <inbox-icon class="text-gray-400 h-8"/>

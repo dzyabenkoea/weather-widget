@@ -7,6 +7,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build:lib": "vue-cli-service build --target lib ./src/main.ts --inline-vue",
     "lint": "vue-cli-service lint",
     "tailwind": "tailwindcss -i ./src/base.css -o ./src/style.css",
     "tailwind:watch": "tailwindcss -i ./src/base.css -o ./src/style.css --watch",

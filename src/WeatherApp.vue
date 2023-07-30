@@ -47,6 +47,9 @@
         </section>
       </article>
     </div>
+    <slide-transition>
+      <Notification v-if="errorMessage" :message="errorMessage" @close="errorMessage=''"/>
+    </slide-transition>
   </div>
 </template>
 <script setup lang="ts">
@@ -56,6 +59,8 @@ import {Coords, WeatherData} from "@/types";
 import SettingsDialog from "@/components/SettingsDialog.vue";
 import {useSettingsStore} from "@/storage/store";
 import {ArrowPathIcon} from "@heroicons/vue/24/outline";
+import SlideTransition from "@/components/transitions/SlideTransition.vue";
+import Notification from "@/components/NotificationPopup.vue";
 
 const locationStore = useSettingsStore()
 const weatherData = ref<WeatherData>()
@@ -68,17 +73,20 @@ const windDirection = computed(() => {
   return windDirections[section]
 })
 const fetchingData = ref(true)
+const errorMessage = ref('')
 
 async function fetchData() {
-
-  // weatherData.value = weatherMockData
-  // return;
 
   fetchingData.value = true;
 
   const location = locationStore.defaultLocation
   if (location) {
-    weatherData.value = await requestWeather({lat: location.lat, lon: location.lng})
+    const response = await requestWeather({lat: location.lat, lon: location.lng})
+    if (response !== null) {
+      weatherData.value = response
+    } else {
+      showErrorNotification('Could not retrieve weather information')
+    }
   } else {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const coords = {lat: position.coords.latitude, lon: position.coords.longitude}
@@ -115,6 +123,12 @@ async function requestWeather(coords: Coords) {
 }
 
 function showErrorNotification(message: string) {
+  console.error(message)
+
+  errorMessage.value = message
+  setTimeout(()=>{
+    errorMessage.value = ''
+  }, 5000)
 
 }
 
