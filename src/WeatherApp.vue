@@ -1,18 +1,20 @@
 <template>
-  <!--  <LoadingAnimation/>-->
-  <div class="p-4 bg-gradient-to-t from-blue-500 to-blue-300 rounded-md max-w-[500px]">
+  <div class="p-4 bg-gradient-to-t from-blue-500 to-blue-300 rounded-md max-w-[500px] relative">
     <div class="pb-10 text-white flex-col flex items-center justify-center">
-      <img v-if="weatherData?.weather[0].icon"
-           :src="`https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`">
+      <img v-if="weatherData !== null" :src="`https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`"
+           @click="fetchingData = true">
       <h1 class="text-3xl flex items-center gap-2">{{ weatherData?.name ?? '--' }}
         <settings-dialog/>
+        <button @click="fetchData()">
+          <arrow-path-icon class="h-6 text-white transition-transform"
+                           :class="{'animate-spin': fetchingData, 'hover:rotate-45': !fetchingData}"/>
+        </button>
       </h1>
       <div class="text-6xl flex items-center gap-2">
         {{ weatherData?.main.temp }}°C
       </div>
 
       <div class="flex flex-col items-center">
-        <!--        <img :src="`https://openweathermap.org/img/wn/${weatherData.current.weather[0].icon}@2x.png`">-->
         <p class="text-2xl">{{ weatherData?.weather[0].description }}</p></div>
 
       <article class="flex gap-2 justify-between mt-4">
@@ -47,14 +49,20 @@
 </template>
 <script setup lang="ts">
 import weatherMockData from "@/assets/response";
-import {computed, ref} from "vue";
-import {WeatherData} from "@/types";
+import {computed, ref, watchEffect} from "vue";
+import {Coords, WeatherData} from "@/types";
 import {Dialog, DialogOverlay, DialogPanel} from "@headlessui/vue";
 import SettingsDialog from "@/components/SettingsDialog.vue";
 import SlideVertical from "@/components/transitions/SlideTransition.vue";
-import {useLocationStore} from "@/storage/store";
+import {useSettingsStore} from "@/storage/store";
+import LoadingAnimation from "@/components/LoadingAnimation.vue";
+import AppearTransition from "@/components/transitions/AppearTransition.vue";
+import BounceAnimation from "@/components/BounceAnimation.vue";
+import SlideTransition from "@/components/transitions/SlideTransition.vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import {ArrowPathIcon} from "@heroicons/vue/24/outline";
 
-const locationStore = useLocationStore()
+const locationStore = useSettingsStore()
 const weatherData = ref<WeatherData>()
 const windDirection = computed(() => {
   const windDirections = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
@@ -64,29 +72,42 @@ const windDirection = computed(() => {
   const section = Math.floor(weatherData.value?.wind.deg / degreesInSection)
   return windDirections[section]
 })
+const fetchingData = ref(true)
 
 async function fetchData() {
-  const location = locationStore.activeLocation
+
+  fetchingData.value = true;
+
+  const location = locationStore.defaultLocation
   if (location) {
-    await requestWeather(location.coords)
+    weatherData.value = await requestWeather({lat: location.lat, lon: location.lng})
   } else {
     navigator.geolocation.getCurrentPosition(async (position) => {
-      const coords = {lat: position.coords.latitude, lng: position.coords.longitude}
+      const coords = {lat: position.coords.latitude, lon: position.coords.longitude}
       const response = await requestWeather(coords)
       if (response !== null) {
         weatherData.value = response
       } else {
         showErrorNotification('Could not retrieve weather information')
       }
-    }, ()=>{
+    }, () => {
       showErrorNotification('Allow geolocation usage or set active location in settings')
     })
   }
+
+  fetchingData.value = false;
+
 }
 
-async function requestWeather(coords: any) {
-  const API_KEY = '761673671f456dbb6eacfb3c95ae9bfb'
-  const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lng}&units=metric&appid=${API_KEY}`)
+async function requestWeather(coords: Coords) {
+  // const API_KEY = '761673671f456dbb6eacfb3c95ae9bfb'
+  const API_KEY = locationStore.apiKey
+  if (!API_KEY) {
+    showErrorNotification('Enter OpenWeather API key in settings')
+    return null
+  }
+
+  const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&units=metric&appid=${API_KEY}`)
   if (response.ok) {
     return await response.json()
   }
@@ -97,7 +118,8 @@ function showErrorNotification(message: string) {
 
 }
 
-fetchData()
-
+watchEffect(() => {
+  fetchData()
+})
 
 </script>

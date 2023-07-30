@@ -26,7 +26,7 @@
   margin: 1.5em
   width: 6em
   height: 6em
-  --c1: #{hsl(0,0,80%)}
+  --c1: white
   &__a
     background: var(--c1)
   &__b
@@ -42,12 +42,12 @@
     transform: translateY(0) scale(1,1)
     animation-timing-function: ease-in
   45%
-    transform: translateY(5em) scale(1,1)
+    transform: translateY(1.5em) scale(1,1)
     animation-timing-function: linear
   50%
-    transform: translateY(5em) scale(1.5,0.5)
+    transform: translateY(1.5em) scale(1.5,0.5)
     animation-timing-function: linear
   55%
-    transform: translateY(5em) scale(1,1)
+    transform: translateY(1.5em) scale(1,1)
     animation-timing-function: ease-out
 </style>

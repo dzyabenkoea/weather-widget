@@ -1,8 +1,5 @@
 export interface WeatherData {
-    coord: {
-        lon: number,
-        lat: number
-    },
+    coord: Coords,
     weather: [
         {
             id: number,
@@ -42,3 +39,23 @@ export interface WeatherData {
     name: string,
     cod: number
 }
+
+export interface Coords {
+    lon: number,
+    lat: number
+}
+
+export interface Location {
+    id: number,
+    city: string,
+    lat: number,
+    lng: number,
+    country: string,
+    "city_ascii": string,
+    "iso2": string,
+    "iso3": string,
+    "admin_name": string,
+    "capital": string,
+    "population": number,
+}
+

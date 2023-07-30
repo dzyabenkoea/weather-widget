@@ -1,12 +1,14 @@
 import {defineStore} from "pinia";
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
+import {Location} from "@/types";
 
-export const useLocationStore = defineStore('settings', () => {
+export const useSettingsStore = defineStore('settings', () => {
 
-    const locations = ref([])
-    const activeLocation = ref()
+    const apiKey = ref('')
+    const locations = ref<Location[]>([])
+    const defaultLocation = computed<Location>(() => locations.value[0] ?? null)
 
-    watch([locations, activeLocation], () => {
+    watch([locations, defaultLocation], () => {
         save()
     })
 
@@ -21,7 +23,7 @@ export const useLocationStore = defineStore('settings', () => {
     }
 
     function save() {
-        const jsonData = {activeLocation: activeLocation.value, locations: locations.value}
+        const jsonData = {locations: locations.value, apiKey: apiKey.value}
         localStorage.setItem('weather-widget-settings', JSON.stringify(jsonData))
     }
 
@@ -38,13 +40,13 @@ export const useLocationStore = defineStore('settings', () => {
         }
         const settings = getSettings()
         if (settings !== null) {
-            activeLocation.value = settings.activeLocation ?? null
             locations.value = settings.locations ?? []
+            apiKey.value = settings.apiKey ?? ''
         }
     }
 
     load()
 
-    return {locations, activeLocation, add, remove}
+    return {locations, defaultLocation, apiKey, add, remove}
 
 })
