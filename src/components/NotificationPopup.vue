@@ -18,6 +18,7 @@
 import {ExclamationCircleIcon, XMarkIcon} from "@heroicons/vue/24/outline";
 
 const props = defineProps<{ message: string }>()
+// eslint-disable-next-line no-unused-vars
 const emits = defineEmits<{(e:'close')}>()
 </script>
 

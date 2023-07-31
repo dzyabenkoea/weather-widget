@@ -44,6 +44,7 @@ import LoadingAnimation from "@/components/LoadingAnimation.vue";
 import AppearTransition from "@/components/transitions/AppearTransition.vue";
 import {XMarkIcon} from "@heroicons/vue/24/outline";
 
+// eslint-disable-next-line no-unused-vars
 const emits = defineEmits<{ (e: 'change', value: { city: string }) }>()
 
 const query = ref('')
