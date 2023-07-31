@@ -5,7 +5,8 @@
 Для использования виджета достаточно скопировать приведенный блок кода на HTML-страницу.
 ```
 <weather-widget/>
-<script src="{}"/>
+<script src="<weather-widget/>
+<script src="http://cdn.jsdelivr.net/gh/dzyabenkoea/weather-widget/dist/weather-widget.umd.min.js"/>
 ```
 
 ## Главный экран
