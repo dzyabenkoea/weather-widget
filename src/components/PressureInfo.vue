@@ -4,7 +4,7 @@
     <h1>pressure</h1>
     <hr class="w-full border-white/40">
     <div class="flex items-center">
-      <span class="font-semibold text-3xl">{{ props.value ?? '--' }}</span>
+      <span class="font-semibold text-3xl">{{ props.value ?? '--' }} hPa</span>
     </div>
   </section>
 </template>
