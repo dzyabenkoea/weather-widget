@@ -14,5 +14,5 @@ module.exports = defineConfig({
           skipEmptyLines: true
         })
         .end()
-  }
+  }, css: { extract: false }
 })

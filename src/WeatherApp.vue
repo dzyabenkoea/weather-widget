@@ -7,10 +7,11 @@
                  @click="fetchingData = true"></div>
       <h1 class="text-3xl flex items-center gap-2">{{ weatherData?.name ?? '--' }}
         <settings-dialog/>
-        <button @click="fetchData()">
-          <arrow-path-icon class="h-6 text-white transition-transform"
-                           :class="{'animate-spin': fetchingData, 'hover:rotate-45': !fetchingData}"/>
-        </button>
+        <reload-button :loading=fetchingData @click="fetchData()"/>
+<!--        <button @click="fetchData()">-->
+<!--          <arrow-path-icon class="h-6 text-white transition-transform"-->
+<!--                           :class="{'animate-spin': fetchingData, 'hover:rotate-45': !fetchingData}"/>-->
+<!--        </button>-->
       </h1>
       <div class="text-6xl flex items-center gap-2">
         {{ weatherData?.main.temp }}°C
@@ -20,31 +21,9 @@
         <p class="text-2xl">{{ weatherData?.weather[0].description }}</p></div>
 
       <article class="flex gap-2 justify-between mt-4">
-        <section
-            class="flex flex-col items-center grow gap-1 border border-white/40 shadow-md shadow-white/10 p-2 rounded-md min-w-[100px]">
-          <h1>wind</h1>
-          <hr class="w-full border-white/40">
-          <div class="flex flex-col items-center">
-            <span class="font-semibold text-3xl">{{ windDirection ?? '--' }}</span>
-            <span class="text-1xl pt-1">{{ weatherData?.wind.speed ?? '--' }} m/s</span>
-          </div>
-        </section>
-        <section
-            class="flex flex-col items-center justify-center grow gap-2 border border-white/40 shadow-md shadow-white/10 p-2 rounded-md min-w-[100px]">
-          <h1>humidity</h1>
-          <hr class="w-full border-white/40">
-          <div class="flex items-center">
-            <span class="font-semibold text-3xl">{{ weatherData?.main.humidity ?? '--' }} %</span>
-          </div>
-        </section>
-        <section
-            class="backdrop-blur flex flex-col items-center justify-center grow gap-2 border border-white/40 shadow-md shadow-white/10 p-2 rounded-md min-w-[100px]">
-          <h1>pressure</h1>
-          <hr class="w-full border-white/40">
-          <div class="flex items-center">
-            <span class="font-semibold text-3xl">{{ weatherData?.main.pressure ?? '--' }}</span>
-          </div>
-        </section>
+        <wind-info :wind-data="weatherData?.wind"/>
+        <humidity-info :value="weatherData?.main.humidity"/>
+        <pressure-info :value="weatherData?.main.pressure"/>
       </article>
     </div>
     <slide-transition>
@@ -61,17 +40,13 @@ import {useSettingsStore} from "@/storage/store";
 import {ArrowPathIcon} from "@heroicons/vue/24/outline";
 import SlideTransition from "@/components/transitions/SlideTransition.vue";
 import Notification from "@/components/NotificationPopup.vue";
+import WindInfo from "@/components/WindInfo.vue";
+import HumidityInfo from "@/components/HumidityInfo.vue";
+import PressureInfo from "@/components/PressureInfo.vue";
+import ReloadButton from "@/components/ui/ReloadButton.vue";
 
 const locationStore = useSettingsStore()
 const weatherData = ref<WeatherData>()
-const windDirection = computed(() => {
-  const windDirections = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
-  if (weatherData.value === undefined)
-    return '-'
-  const degreesInSection = 360 / windDirections.length
-  const section = Math.floor(weatherData.value?.wind.deg / degreesInSection)
-  return windDirections[section]
-})
 const fetchingData = ref(true)
 const errorMessage = ref('')
 

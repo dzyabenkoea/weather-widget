@@ -20,11 +20,7 @@ export interface WeatherData {
         grnd_level?: number
     },
     visibility: number,
-    wind: {
-        speed: number,
-        deg: number,
-        gust?: number
-    },
+    wind: Wind,
     clouds: {
         all: number
     },
@@ -57,5 +53,11 @@ export interface Location {
     "admin_name": string,
     "capital": string,
     "population": number,
+}
+
+export interface Wind {
+    speed: number,
+    deg: number,
+    gust?: number
 }
 
