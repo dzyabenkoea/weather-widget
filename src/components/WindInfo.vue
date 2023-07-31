@@ -5,7 +5,7 @@
     <hr class="w-full border-white/40">
     <div class="flex flex-col items-center">
       <span class="font-semibold text-3xl">{{ windDirection ?? '--' }}</span>
-      <span class="text-1xl pt-1">{{ windData.speed ?? '--' }} m/s</span>
+      <span class="text-1xl pt-1">{{ value?.speed ?? '--' }} m/s</span>
     </div>
   </section>
 </template>
@@ -14,14 +14,14 @@
 import {computed} from "vue";
 import {Wind} from "@/types";
 
-const props = defineProps<{ windData: Wind }>()
+const props = defineProps<{ value: Wind }>()
 
 const windDirection = computed(() => {
   const windDirections = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
-  if (props.windData === undefined)
+  if (props.value === undefined)
     return '-'
   const degreesInSection = 360 / windDirections.length
-  const section = Math.floor(props.windData?.deg / degreesInSection)
+  const section = Math.floor(props.value?.deg / degreesInSection)
   return windDirections[section]
 })
 

@@ -4,24 +4,22 @@
       <div class="h-[100px]">
         <img v-if="weatherData?.weather[0].icon"
                  :src="`https://openweathermap.org/img/wn/${weatherData?.weather[0].icon}@2x.png`"
+                  :alt="weatherData?.weather[0].description"
                  @click="fetchingData = true"></div>
       <h1 class="text-3xl flex items-center gap-2">{{ weatherData?.name ?? '--' }}
         <settings-dialog/>
         <reload-button :loading=fetchingData @click="fetchData()"/>
-<!--        <button @click="fetchData()">-->
-<!--          <arrow-path-icon class="h-6 text-white transition-transform"-->
-<!--                           :class="{'animate-spin': fetchingData, 'hover:rotate-45': !fetchingData}"/>-->
-<!--        </button>-->
       </h1>
       <div class="text-6xl flex items-center gap-2">
         {{ weatherData?.main.temp }}°C
       </div>
 
       <div class="flex flex-col items-center">
-        <p class="text-2xl">{{ weatherData?.weather[0].description }}</p></div>
+        <p class="text-2xl">{{ weatherData?.weather[0].description }}</p>
+      </div>
 
       <article class="flex gap-2 justify-between mt-4">
-        <wind-info :wind-data="weatherData?.wind"/>
+        <wind-info :value="weatherData?.wind"/>
         <humidity-info :value="weatherData?.main.humidity"/>
         <pressure-info :value="weatherData?.main.pressure"/>
       </article>
@@ -32,12 +30,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import weatherMockData from "@/assets/response";
-import {computed, ref, watchEffect} from "vue";
+import {ref, watchEffect} from "vue";
 import {Coords, WeatherData} from "@/types";
 import SettingsDialog from "@/components/SettingsDialog.vue";
 import {useSettingsStore} from "@/storage/store";
-import {ArrowPathIcon} from "@heroicons/vue/24/outline";
 import SlideTransition from "@/components/transitions/SlideTransition.vue";
 import Notification from "@/components/NotificationPopup.vue";
 import WindInfo from "@/components/WindInfo.vue";
