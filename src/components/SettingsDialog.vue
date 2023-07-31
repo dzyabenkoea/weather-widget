@@ -57,8 +57,6 @@ const allowAdd = computed(() => !!newLocation.value)
 const apiKey = ref(settingsStore.apiKey)
 const apiKeyNeedsSaving = computed(() => settingsStore.apiKey !== apiKey.value)
 
-const testList = ref([1, 2, 3])
-
 function hideNewLocationDialog() {
   newLocationIsOpen.value = false
   newLocation.value = null
