@@ -56,7 +56,7 @@ async function fetchData() {
     if (response !== null) {
       weatherData.value = response
     } else {
-      showErrorNotification('Could not retrieve weather information')
+      weatherData.value = null
     }
   } else {
     navigator.geolocation.getCurrentPosition(async (position) => {
@@ -84,12 +84,15 @@ async function requestWeather(coords: Coords) {
     return null
   }
 
-  const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&units=metric&appid=${API_KEY}`)
-  if (response.ok) {
-    return await response.json()
+  try {
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&units=metric&appid=${API_KEY}`)
+    if (response.ok) {
+      return await response.json()
+    }
   }
-
-  return null
+  catch (e){
+    return null
+  }
 
 }
 

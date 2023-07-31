@@ -16,7 +16,7 @@
           <div class="border rounded-md flex gap-1 justify-between group-focus-visible:outline overflow-hidden">
             <input id="apiKeyInput" type="text" class="px-2 py-1 grow outline-none" v-model="apiKey">
             <appear-transition>
-              <button v-if="apiKey && apiKeyNeedsSaving" class="px-2 rounded bg-blue-500 m-1 text-white text-center"
+              <button v-if="apiKeyNeedsSaving" class="px-2 rounded bg-blue-500 m-1 text-white text-center"
                       @click="settingsStore.apiKey = apiKey">
                 <span class="text-sm">save</span>
               </button>
